@@ -1,8 +1,9 @@
 
 
 d3.csv("the_File2.csv", function(data) {
-	console.log(data);
 	var flightArcs = [];
+	var arcOptions = {strokeWidth: 1, arcSharpness: 1.4};
+
 	data.forEach(function(flight){
 
 		var origin = {
@@ -14,18 +15,23 @@ d3.csv("the_File2.csv", function(data) {
 			longitude: parseFloat(flight.arrival_long)
 		};
 
-		flightArcs.push({ origin: origin, destination: destination });
+		flightArcs.push({ origin: origin, destination: destination, departure_country: flight.departure_country });
 
 	});
 
-	// var groupedByCity = _.groupBy(data, function(d){
-	// 	return d["departure city"];
-	// });
-
-	// console.log(groupedByCity["Cape Town"]);
-
 	var worldMap = new Datamap({
 		element: document.getElementById('container'),
+		setProjection: function(element) {
+		    var projection = d3.geo.equirectangular()
+		      .center([23, -3])
+		      .rotate([4.4, 0])
+		      .scale(400)
+		      .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
+		    var path = d3.geo.path()
+		      .projection(projection);
+		    
+		    return {path: path, projection: projection};
+		},
 		fills: {
             defaultFill: 'DarkGray'
         },
@@ -33,22 +39,14 @@ d3.csv("the_File2.csv", function(data) {
             highlightOnHover: true,
             popupOnHover: false
         },
-        data: data
+        data: data,
+        done: function(datamap) {
+            datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+                var country = geography.properties.name;
+                var departsFromCountry = _.filter(flightArcs, { departure_country: country });
+                worldMap.arc(departsFromCountry, arcOptions)
+            });
+        }
 	});
 
-	worldMap.arc(flightArcs,  {strokeWidth: 1, arcSharpness: 1.4});
-
 });
-
-
-// [{ 
-//   	origin: { latitude: 40.639722, longitude: -73.778889 },
-//     destination: { latitude: 37.618889, longitude: -122.375 }
-// }, {
-//   	origin: { latitude: 30.194444, longitude: -97.67 },
-//     destination: { latitude: 25.793333, longitude: -80.290556 },
-//     options: { strokeWidth: 2, strokeColor: 'rgba(100, 10, 200, 0.4)', greatArc: true }
-// }, {
-// 	origin: { latitude: 39.861667, longitude: -104.673056 },
-// 	destination: { latitude: 35.877778, longitude: -78.7875}
-// }]

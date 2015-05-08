@@ -1,4 +1,4 @@
-departure city,long. departure (decimal),lat. departure (decimal),departure country,arrival city,long. departure (decimal),lat. departure (decimal),arrival country,number of routes,distance
+departure_city,departure_long,departure_lat,departure_country,arrival_city,arrival_long,arrival_lat,arrival_country,number_of_routes,distance
 Johannesburg,28.41,-25.566,South Africa,Cape Town,19.002,-33.942,South Africa,16,1299
 Cape Town,19.002,-33.942,South Africa,Johannesburg,28.41,-25.566,South Africa,14,1299
 Kigali,30.232,-1.948,Rwanda,Entebbe,32.739,0.07,Uganda,14,357
